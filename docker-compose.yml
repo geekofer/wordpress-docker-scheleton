@@ -1,30 +1,33 @@
-version: '3' # version del script
-services: # declarion de los servicios/contenedores a usar
-  db: # declaracion del contendor mysql
-    image: mysql:5.7 # imagen a usar
-    volumes: # volumens a vincular
+version: '3'
+services: 
+  db: 
+    image: mysql:5.7 
+    volumes: 
       - './.dbdata/db:/var/lib/mysql'
-    restart: always # reiniciar automático y arranque automático al iniciar docker
-    environment: # variables de entorno
+    restart: always 
+    environment: 
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
   wordpress:
-    depends_on: # dependencia de este contenedor
-      - db # contenedor del que depende
+    depends_on: 
+      - db 
     image: wordpress:latest
-    links: # vincular contenedores para que se puedan "ver"
-      - db # contendor vinculado
+    links: 
+      - db 
     ports:
-      - '${APP_PORT}:80' # Puertos del exterior vinculado con el del contenedor
+      - '${APP_PORT}:80'
     restart: always
     volumes:
       - ./app:/var/www/html
     environment:
       WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${DB_DATABASE}
       WORDPRESS_DB_USER: ${DB_USER}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${DB_PREFIX}
+
   phpmyadmin:
     depends_on:
       - db
